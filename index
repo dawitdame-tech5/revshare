@@ -74,14 +74,14 @@ dt{font-weight:600} dd{margin:0;color:var(--muted)}
 </style>
 </head>
 <body>
-
+ 
 <div class="wrap">
 <header>
   <div class="eyebrow">Tech5 OmniTrust · Tahakom discussion · internal</div>
   <h1>Revenue share or Tahakom equity?</h1>
   <p>For the same capital, compare giving a funder a share of Tech5's revenue on the projects it funds (option A) with issuing Tahakom equity (option B). Pick a combination, or click any cell in the matrix.</p>
 </header>
-
+ 
 <section class="panel controls" aria-label="Choices">
   <div class="ctl"><label for="case">What the money funds</label><select id="case"></select><small>Which projects</small></div>
   <div class="ctl"><label for="view">View</label><select id="view"><option>Tahakom's numbers</option><option>Our view</option></select><small>Default: Tahakom's (stricter)</small></div>
@@ -89,7 +89,7 @@ dt{font-weight:600} dd{margin:0;color:var(--muted)}
   <div class="ctl"><label for="ask">Investor's ask</label><select id="ask"></select><small>Share of Tech5's revenue</small></div>
   <div class="ctl"><label for="year">Measurement year</label><select id="year"><option>2030</option><option>2031</option></select><small>2030 = current term</small></div>
 </section>
-
+ 
 <section class="result">
   <div>
     <div id="verdict" class="verdict" role="status" aria-live="polite"><span class="big" id="vBig"></span><span class="sub" id="vSub"></span></div>
@@ -105,14 +105,14 @@ dt{font-weight:600} dd{margin:0;color:var(--muted)}
     <ul class="steps" id="steps"></ul>
   </div>
 </section>
-
+ 
 <section class="panel">
   <h2>Every capital and ask at once</h2>
   <div class="legend"><span>Ask ÷ break-even:</span><span>0 · revenue share cheaper</span><span class="ramp" aria-hidden="true"></span><span>2+ · Tahakom equity cheaper</span></div>
   <div class="scroll"><table class="m" id="matrix" aria-label="Ask divided by break-even ask, by capital and ask"></table></div>
   <p class="note">Each cell is the ask divided by the break-even ask. Below 1.0 the revenue share costs our shareholders less than Tahakom equity; above 1.0 it costs more. The outlined cell is your current choice.</p>
 </section>
-
+ 
 <details>
   <summary>Reference: the two views, terms and assumptions</summary>
   <div class="ref">
@@ -130,7 +130,7 @@ dt{font-weight:600} dd{margin:0;color:var(--muted)}
   </div>
 </details>
 </div>
-
+ 
 <script>
 const S={"Kenya | Our view":{"R":[33.21,49.906,74.928,112.415,168.577,202.43,226.848,242.805,252.541,257.602],"E":[16.992,31.297,84.081,133.335,213.709,282.155,350.903,394.927,416.416,418.002]},"Kenya | Tahakom's numbers":{"R":[4.649,15.97,25.476,42.718,62.373,76.923,86.202,94.694,103.542,110.769],"E":[-2.0,5.68,17.68,36.12,59.17,null,null,null,null,null]},"Colombia | Our view":{"R":[0.0,0.0,11.84,25.127,48.393,80.42,112.5,135.909,149.341,156.004],"E":[16.992,31.297,84.081,133.335,213.709,282.155,350.903,394.927,416.416,418.002]},"Colombia | Tahakom's numbers":{"R":[0.0,0.0,4.026,9.548,17.905,30.56,42.75,53.005,61.23,67.082],"E":[-2.0,5.68,17.68,36.12,59.17,null,null,null,null,null]},"Papua New Guinea | Our view":{"R":[0.685,1.392,2.656,4.649,7.223,9.81,11.816,13.081,13.774,14.127],"E":[16.992,31.297,84.081,133.335,213.709,282.155,350.903,394.927,416.416,418.002]},"Papua New Guinea | Tahakom's numbers":{"R":[0.096,0.445,0.903,1.767,2.672,3.728,4.49,5.101,5.647,6.075],"E":[-2.0,5.68,17.68,36.12,59.17,null,null,null,null,null]},"Djibouti | Our view":{"R":[0.099,0.211,0.415,0.743,1.176,1.613,1.947,2.15,2.258,2.31],"E":[16.992,31.297,84.081,133.335,213.709,282.155,350.903,394.927,416.416,418.002]},"Djibouti | Tahakom's numbers":{"R":[0.014,0.067,0.141,0.282,0.435,0.613,0.74,0.839,0.926,0.993],"E":[-2.0,5.68,17.68,36.12,59.17,null,null,null,null,null]},"Indonesia (hypothetical) | Our view":{"R":[0.0,0.0,92.93,181.232,323.901,510.61,697.465,840.571,929.309,977.287],"E":[16.992,31.297,130.546,223.951,375.66,537.46,699.636,815.213,881.071,906.646]},"Indonesia (hypothetical) | Tahakom's numbers":{"R":[0.0,0.0,31.596,68.868,119.844,194.032,265.037,327.823,381.017,420.233],"E":[-2.0,5.68,33.478,70.554,119.092,null,null,null,null,null]},"Portfolio: 25% of revenue | Our view":{"R":[9.63,16.358,33.161,54.17,82.695,108.536,131.73,148.251,158.267,163.767],"E":[16.992,31.297,84.081,133.335,213.709,282.155,350.903,394.927,416.416,418.002]},"Portfolio: 25% of revenue | Tahakom's numbers":{"R":[1.25,5.0,10.25,18.75,28.5,38.25,46.75,54.25,61.25,66.75],"E":[-2.0,5.68,17.68,36.12,59.17,null,null,null,null,null]},"Portfolio: 50% of revenue | Our view":{"R":[19.261,32.716,66.322,108.341,165.391,217.071,263.46,296.502,316.534,327.534],"E":[16.992,31.297,84.081,133.335,213.709,282.155,350.903,394.927,416.416,418.002]},"Portfolio: 50% of revenue | Tahakom's numbers":{"R":[2.5,10.0,20.5,37.5,57.0,76.5,93.5,108.5,122.5,133.5],"E":[-2.0,5.68,17.68,36.12,59.17,null,null,null,null,null]},"Portfolio: 75% of revenue | Our view":{"R":[28.891,49.074,99.483,162.511,248.086,325.607,395.19,444.753,474.802,491.301],"E":[16.992,31.297,84.081,133.335,213.709,282.155,350.903,394.927,416.416,418.002]},"Portfolio: 75% of revenue | Tahakom's numbers":{"R":[3.75,15.0,30.75,56.25,85.5,114.75,140.25,162.75,183.75,200.25],"E":[-2.0,5.68,17.68,36.12,59.17,null,null,null,null,null]}};
 const GROUP={"Our view":{rev:{2030:216.7,2031:330.8},ebitda:{2030:133.3,2031:213.7}},"Tahakom's numbers":{rev:{2030:75,2031:114},ebitda:{2030:36.1,2031:59.2}}};
@@ -196,6 +196,7 @@ matchMedia("(prefers-color-scheme: dark)").addEventListener("change",render);
 new MutationObserver(render).observe(document.documentElement,{attributes:true,attributeFilter:["data-theme"]});
 render();
 </script>
-
+ 
 </body>
 </html>
+ 
