@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{color-scheme:light}body{margin:0}[hidden]{display:none!important}</style>
+<title>Revenue Share vs Tahakom Equity</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one working column — choices, verdict with its arithmetic, then the full capital × ask matrix; reference folded below */
+:root{
+  --bg:#F5F6F8; --surface:#FFFFFF; --ink:#16202E; --muted:#5B6575; --line:#D9DDE4; --accent:#1F3864; --accent-soft:#E6EBF4;
+  --pass:#2E7D4F; --mid:#E8B931; --fail:#B23A2E; --pass-ink:#FFFFFF; --mid-ink:#2A2200; --fail-ink:#FFFFFF;
+  --sans:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif; --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0F141B; --surface:#171E28; --ink:#E7EBF1; --muted:#9AA4B3; --line:#2A3442; --accent:#8FB0E6; --accent-soft:#1E2A3C;
+  --pass:#3A9663; --mid:#D9A92A; --fail:#C4493C; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0F141B; --surface:#171E28; --ink:#E7EBF1; --muted:#9AA4B3; --line:#2A3442; --accent:#8FB0E6; --accent-soft:#1E2A3C;
+  --pass:#3A9663; --mid:#D9A92A; --fail:#C4493C; color-scheme:dark}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.5}
+.wrap{max-width:1080px;margin:0 auto;padding-block:28px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:22px}
+header h1{margin:0;font-size:1.65rem;font-weight:700;letter-spacing:-.01em;text-wrap:balance}
+header p{margin:6px 0 0;color:var(--muted);max-width:72ch}
+.eyebrow{font-size:.72rem;letter-spacing:.09em;text-transform:uppercase;color:var(--accent);font-weight:600}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px 20px}
+.controls{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px}
+.ctl{display:flex;flex-direction:column;gap:5px;min-width:0}
+.ctl label{font-size:.78rem;font-weight:600;color:var(--muted)}
+.ctl select{font:inherit;font-size:.92rem;padding:8px 10px;border:1px solid var(--line);border-radius:7px;background:var(--surface);color:var(--ink);width:100%}
+.ctl select:focus-visible,.cell:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.ctl small{font-size:.74rem;color:var(--muted)}
+.result{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:22px;align-items:start}
+.verdict{border-radius:10px;padding:18px 20px;color:var(--pass-ink);background:var(--pass);display:flex;flex-direction:column;gap:6px}
+.verdict.mid{background:var(--mid);color:var(--mid-ink)} .verdict.fail{background:var(--fail);color:var(--fail-ink)}
+.verdict .big{font-size:1.5rem;font-weight:700}
+.verdict .sub{font-size:.92rem;opacity:.95}
+.kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:12px}
+.kpi{border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:var(--surface)}
+.kpi .v{font-family:var(--mono);font-size:1.15rem;font-weight:500;font-variant-numeric:tabular-nums}
+.kpi .l{font-size:.74rem;color:var(--muted)}
+.steps{margin:0;padding:0;list-style:none;display:flex;flex-direction:column}
+.steps li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;padding:8px 0;border-bottom:1px solid var(--line);font-size:.9rem}
+.steps li:last-child{border-bottom:0}
+.steps .n{font-family:var(--mono);font-variant-numeric:tabular-nums;font-weight:500;text-align:right;white-space:nowrap}
+.steps .em{font-weight:600}
+.steps .hint{display:block;color:var(--muted);font-size:.76rem}
+.flag{margin-top:10px;font-size:.82rem;color:var(--muted)}
+h2{font-size:1.05rem;margin:0 0 4px}
+.legend{display:flex;align-items:center;gap:10px;font-size:.78rem;color:var(--muted);flex-wrap:wrap;margin:6px 0 12px}
+.ramp{width:160px;height:10px;border-radius:5px;background:linear-gradient(90deg,var(--pass),var(--mid),var(--fail))}
+.scroll{overflow-x:auto}
+table.m{border-collapse:separate;border-spacing:3px;font-variant-numeric:tabular-nums;min-width:860px}
+table.m th{font-size:.72rem;font-weight:600;color:var(--muted);padding:4px 2px;text-align:center}
+table.m th.row{text-align:right;padding-right:8px;white-space:nowrap}
+table.m td.be{font-family:var(--mono);font-size:.78rem;text-align:center;color:var(--accent);background:var(--accent-soft);border-radius:4px;padding:0 6px}
+.cell{font-family:var(--mono);font-size:.72rem;width:38px;height:30px;border:0;border-radius:4px;cursor:pointer;padding:0}
+.cell.sel{outline:2.5px solid var(--ink);outline-offset:1px}
+.note{font-size:.8rem;color:var(--muted);margin:10px 0 0}
+details{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 20px}
+summary{cursor:pointer;font-weight:600}
+.ref{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:22px;margin-top:14px}
+table.r{width:100%;border-collapse:collapse;font-size:.85rem}
+table.r th,table.r td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+table.r td.num{text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums}
+table.r th{font-size:.75rem;color:var(--muted);font-weight:600}
+dl{margin:0;display:flex;flex-direction:column;gap:10px;font-size:.85rem}
+dt{font-weight:600} dd{margin:0;color:var(--muted)}
+@media (max-width:860px){.controls{grid-template-columns:repeat(2,minmax(0,1fr))}.result,.ref{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:440px){.controls{grid-template-columns:minmax(0,1fr)}.kpis{grid-template-columns:minmax(0,1fr)}}
+@media (prefers-reduced-motion:no-preference){.verdict{transition:background-color .2s}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+<header>
+  <div class="eyebrow">Tech5 OmniTrust · Tahakom discussion · internal</div>
+  <h1>Revenue share or Tahakom equity?</h1>
+  <p>For the same capital, compare giving a funder a share of Tech5's revenue on the projects it funds (option A) with issuing Tahakom equity (option B). Pick a combination, or click any cell in the matrix.</p>
+</header>
+
+<section class="panel controls" aria-label="Choices">
+  <div class="ctl"><label for="case">What the money funds</label><select id="case"></select><small>Which projects</small></div>
+  <div class="ctl"><label for="view">View</label><select id="view"><option>Tahakom's numbers</option><option>Our view</option></select><small>Default: Tahakom's (stricter)</small></div>
+  <div class="ctl"><label for="cap">Capital injection</label><select id="cap"></select><small>$1M – $5M</small></div>
+  <div class="ctl"><label for="ask">Investor's ask</label><select id="ask"></select><small>Share of Tech5's revenue</small></div>
+  <div class="ctl"><label for="year">Measurement year</label><select id="year"><option>2030</option><option>2031</option></select><small>2030 = current term</small></div>
+</section>
+
+<section class="result">
+  <div>
+    <div id="verdict" class="verdict" role="status" aria-live="polite"><span class="big" id="vBig"></span><span class="sub" id="vSub"></span></div>
+    <div class="kpis">
+      <div class="kpi"><div class="v" id="kBE"></div><div class="l">Break-even ask</div></div>
+      <div class="kpi"><div class="v" id="kGain"></div><div class="l">Gain / (loss) for our shareholders</div></div>
+      <div class="kpi"><div class="v" id="kIRR"></div><div class="l">Funder's annual return on capital</div></div>
+    </div>
+    <p class="flag" id="flag"></p>
+  </div>
+  <div class="panel">
+    <h2 id="cmpTitle">Cost comparison</h2>
+    <ul class="steps" id="steps"></ul>
+  </div>
+</section>
+
+<section class="panel">
+  <h2>Every capital and ask at once</h2>
+  <div class="legend"><span>Ask ÷ break-even:</span><span>0 · revenue share cheaper</span><span class="ramp" aria-hidden="true"></span><span>2+ · Tahakom equity cheaper</span></div>
+  <div class="scroll"><table class="m" id="matrix" aria-label="Ask divided by break-even ask, by capital and ask"></table></div>
+  <p class="note">Each cell is the ask divided by the break-even ask. Below 1.0 the revenue share costs our shareholders less than Tahakom equity; above 1.0 it costs more. The outlined cell is your current choice.</p>
+</section>
+
+<details>
+  <summary>Reference: the two views, terms and assumptions</summary>
+  <div class="ref">
+    <div>
+      <table class="r" id="views"></table>
+      <p class="note">Tahakom's numbers give the lower break-even in every case tested, so an ask that passes there passes on ours too.</p>
+    </div>
+    <dl>
+      <dt>Our view</dt><dd>The OmniTrust master model, with each country's adoption starting at its own go-live date (the correction Tahakom applied).</dd>
+      <dt>Tahakom's numbers</dt><dd>Their revenue forecast (deck p.2) with our cost structure applied, since they gave no EBITDA. Country revenue is about 0.38× ours.</dd>
+      <dt>Measurement year</dt><dd>Tahakom reviews ownership on 2030 EBITDA, the fourth year of operations. 2031 shows the review year we are proposing.</dd>
+      <dt>Funder's return</dt><dd>Annual return on the funder's capital from the ask alone, 2027–2036, capital paid at the start of 2027, no exit payment.</dd>
+      <dt>Locked assumptions</dt><dd>Company value = 10 × EBITDA. Tahakom equity priced at $120M EV less an $8.8M bridge (equity value $111.2M), as implied by $11M for 9%. Tech5's base share of country revenue is 25%. Indonesia is hypothetical, go-live Jan-2029.</dd>
+    </dl>
+  </div>
+</details>
+</div>
+
+<script>
+const S={"Kenya | Our view":{"R":[33.21,49.906,74.928,112.415,168.577,202.43,226.848,242.805,252.541,257.602],"E":[16.992,31.297,84.081,133.335,213.709,282.155,350.903,394.927,416.416,418.002]},"Kenya | Tahakom's numbers":{"R":[4.649,15.97,25.476,42.718,62.373,76.923,86.202,94.694,103.542,110.769],"E":[-2.0,5.68,17.68,36.12,59.17,null,null,null,null,null]},"Colombia | Our view":{"R":[0.0,0.0,11.84,25.127,48.393,80.42,112.5,135.909,149.341,156.004],"E":[16.992,31.297,84.081,133.335,213.709,282.155,350.903,394.927,416.416,418.002]},"Colombia | Tahakom's numbers":{"R":[0.0,0.0,4.026,9.548,17.905,30.56,42.75,53.005,61.23,67.082],"E":[-2.0,5.68,17.68,36.12,59.17,null,null,null,null,null]},"Papua New Guinea | Our view":{"R":[0.685,1.392,2.656,4.649,7.223,9.81,11.816,13.081,13.774,14.127],"E":[16.992,31.297,84.081,133.335,213.709,282.155,350.903,394.927,416.416,418.002]},"Papua New Guinea | Tahakom's numbers":{"R":[0.096,0.445,0.903,1.767,2.672,3.728,4.49,5.101,5.647,6.075],"E":[-2.0,5.68,17.68,36.12,59.17,null,null,null,null,null]},"Djibouti | Our view":{"R":[0.099,0.211,0.415,0.743,1.176,1.613,1.947,2.15,2.258,2.31],"E":[16.992,31.297,84.081,133.335,213.709,282.155,350.903,394.927,416.416,418.002]},"Djibouti | Tahakom's numbers":{"R":[0.014,0.067,0.141,0.282,0.435,0.613,0.74,0.839,0.926,0.993],"E":[-2.0,5.68,17.68,36.12,59.17,null,null,null,null,null]},"Indonesia (hypothetical) | Our view":{"R":[0.0,0.0,92.93,181.232,323.901,510.61,697.465,840.571,929.309,977.287],"E":[16.992,31.297,130.546,223.951,375.66,537.46,699.636,815.213,881.071,906.646]},"Indonesia (hypothetical) | Tahakom's numbers":{"R":[0.0,0.0,31.596,68.868,119.844,194.032,265.037,327.823,381.017,420.233],"E":[-2.0,5.68,33.478,70.554,119.092,null,null,null,null,null]},"Portfolio: 25% of revenue | Our view":{"R":[9.63,16.358,33.161,54.17,82.695,108.536,131.73,148.251,158.267,163.767],"E":[16.992,31.297,84.081,133.335,213.709,282.155,350.903,394.927,416.416,418.002]},"Portfolio: 25% of revenue | Tahakom's numbers":{"R":[1.25,5.0,10.25,18.75,28.5,38.25,46.75,54.25,61.25,66.75],"E":[-2.0,5.68,17.68,36.12,59.17,null,null,null,null,null]},"Portfolio: 50% of revenue | Our view":{"R":[19.261,32.716,66.322,108.341,165.391,217.071,263.46,296.502,316.534,327.534],"E":[16.992,31.297,84.081,133.335,213.709,282.155,350.903,394.927,416.416,418.002]},"Portfolio: 50% of revenue | Tahakom's numbers":{"R":[2.5,10.0,20.5,37.5,57.0,76.5,93.5,108.5,122.5,133.5],"E":[-2.0,5.68,17.68,36.12,59.17,null,null,null,null,null]},"Portfolio: 75% of revenue | Our view":{"R":[28.891,49.074,99.483,162.511,248.086,325.607,395.19,444.753,474.802,491.301],"E":[16.992,31.297,84.081,133.335,213.709,282.155,350.903,394.927,416.416,418.002]},"Portfolio: 75% of revenue | Tahakom's numbers":{"R":[3.75,15.0,30.75,56.25,85.5,114.75,140.25,162.75,183.75,200.25],"E":[-2.0,5.68,17.68,36.12,59.17,null,null,null,null,null]}};
+const GROUP={"Our view":{rev:{2030:216.7,2031:330.8},ebitda:{2030:133.3,2031:213.7}},"Tahakom's numbers":{rev:{2030:75,2031:114},ebitda:{2030:36.1,2031:59.2}}};
+const CASES=["Kenya","Colombia","Papua New Guinea","Djibouti","Indonesia (hypothetical)","Portfolio: 25% of revenue","Portfolio: 50% of revenue","Portfolio: 75% of revenue"];
+const VEQ=111.2222, MULT=10, CAPS=[1,2,3,4,5], ASKS=Array.from({length:20},(_,i)=>(i+1)/100);
+const $=id=>document.getElementById(id);
+const st={case:"Portfolio: 50% of revenue",view:"Tahakom's numbers",cap:3,ask:0.05,year:2030};
+CASES.forEach(c=>$("case").add(new Option(c,c)));
+CAPS.forEach(c=>$("cap").add(new Option("$"+c+"M",c)));
+ASKS.forEach(a=>$("ask").add(new Option(Math.round(a*100)+"%",a)));
+const m=v=>"$"+v.toLocaleString(undefined,{minimumFractionDigits:1,maximumFractionDigits:1})+"M";
+const money=v=>v<0?"("+m(-v)+")":m(v);
+const pct=(v,d=1)=>v>=1?">100%":(v*100).toFixed(d)+"%";
+function series(c,v){return S[c+" | "+v]}
+function breakEven(c,v,cap,y){const s=series(c,v),i=y-2027,R=s.R[i],E=s.E[i];if(R<=0)return 1;if(E<=0)return 0;return cap/(VEQ+cap)*E/R}
+function irr(fl){const npv=r=>fl.reduce((a,f,t)=>a+f/Math.pow(1+r,t),0);let lo=-0.99,hi=10;if(npv(lo)*npv(hi)>0)return null;for(let k=0;k<200;k++){const mid=(lo+hi)/2;(npv(lo)*npv(mid)<=0)?hi=mid:lo=mid}return (lo+hi)/2}
+function mix(a,b,t){return a.map((x,i)=>Math.round(x+(b[i]-x)*t))}
+function hex(h){return [1,3,5].map(i=>parseInt(h.slice(i,i+2),16))}
+function cellColor(r){const cs=getComputedStyle(document.documentElement);const g=hex(cs.getPropertyValue("--pass").trim()),y=hex(cs.getPropertyValue("--mid").trim()),rd=hex(cs.getPropertyValue("--fail").trim());const t=Math.min(Math.max(r,0),2);const c=t<=1?mix(g,y,t):mix(y,rd,t-1);const lum=(0.299*c[0]+0.587*c[1]+0.114*c[2]);return {bg:`rgb(${c})`,fg:lum>150?"#1A1A1A":"#FFFFFF"}}
+function render(){
+  ["case","view","cap","ask","year"].forEach(k=>{$(k).value=String(st[k])});
+  const s=series(st.case,st.view),i=st.year-2027,R=s.R[i],E=s.E[i],V=MULT*E,d=st.cap/(VEQ+st.cap);
+  const costB=d*V,costA=st.ask*R*MULT,be=breakEven(st.case,st.view,st.cap,st.year),ratio=be<=0?9.99:st.ask/be;
+  const cls=ratio<0.8?"":ratio<=1?"mid":"fail";
+  $("verdict").className="verdict "+cls;
+  $("vBig").textContent=ratio<0.8?"Pass":ratio<=1?"Borderline":"Fail";
+  $("vSub").textContent=ratio<0.8?"The revenue share is cheaper than Tahakom equity.":ratio<=1?"About the same cost as Tahakom equity.":"Tahakom equity is cheaper than this revenue share.";
+  $("kBE").textContent=pct(be);
+  $("kGain").textContent=money(costB-costA);
+  const fl=[-st.cap].concat(s.R.map(r=>st.ask*r));const tot=fl.slice(1).reduce((a,b)=>a+b,0);
+  const r=irr(fl);$("kIRR").textContent=tot<st.cap?"Never repaid":(r==null?"n/a":(r*100).toFixed(0)+"%");
+  $("flag").textContent=(st.view==="Tahakom's numbers"&&E<55)?"On Tahakom's numbers EBITDA is below $55M, where a revenue share also lifts Tahakom's stake. Treat Borderline as Fail.":"";
+  $("cmpTitle").textContent="Cost comparison, measured in "+st.year;
+  const rows=[
+    ["Financed revenue","Tech5 revenue on the projects the money funds",m(R)],
+    ["Tech5 group EBITDA","",m(E)],
+    ["Company value","10 × EBITDA",m(V)],
+    ["Tahakom dilution","capital ÷ (equity value $111M + capital)",pct(d)],
+    ["Cost of Tahakom equity (B)","dilution × company value",m(costB)],
+    ["Cost of the revenue share (A)","ask × financed revenue × 10",m(costA)],
+    ["Break-even ask","where both costs are equal",pct(be),true],
+    ["Your ask ÷ break-even","below 0.8 pass · 0.8–1.0 borderline · above 1.0 fail",ratio>=9.99?"–":ratio.toFixed(2)+"×",true]];
+  $("steps").innerHTML=rows.map(([a,b,v,em])=>`<li><span class="${em?"em":""}">${a}${b?`<span class="hint">${b}</span>`:""}</span><span class="n ${em?"em":""}">${v}</span></li>`).join("");
+  // matrix
+  let h="<thead><tr><th class='row'>Capital</th><th>Break-even</th>"+ASKS.map(a=>`<th>${Math.round(a*100)}%</th>`).join("")+"</tr></thead><tbody>";
+  CAPS.forEach(c=>{const b=breakEven(st.case,st.view,c,st.year);h+=`<tr><th class='row'>$${c}M</th><td class='be'>${pct(b)}</td>`;
+    ASKS.forEach(a=>{const q=b<=0?9.99:a/b;const col=cellColor(q);const sel=(c===st.cap&&Math.abs(a-st.ask)<1e-9);
+      h+=`<td><button class="cell${sel?" sel":""}" style="background:${col.bg};color:${col.fg}" data-c="${c}" data-a="${a}" aria-label="$${c}M at ${Math.round(a*100)}%: ${q>=9.99?"no break-even":q.toFixed(2)+" times break-even"}">${q>=9.99?"–":(q>=10?q.toFixed(0):q.toFixed(1))}</button></td>`});h+="</tr>"});
+  $("matrix").innerHTML=h+"</tbody>";
+  // reference
+  const G=GROUP,o=series(st.case,"Our view"),t=series(st.case,"Tahakom's numbers");
+  $("views").innerHTML=`<thead><tr><th>In ${st.year}</th><th>Our view</th><th>Tahakom's numbers</th></tr></thead><tbody>
+  <tr><td>Tech5 revenue</td><td class="num">${m(G["Our view"].rev[st.year])}</td><td class="num">${m(G["Tahakom's numbers"].rev[st.year])}</td></tr>
+  <tr><td>Tech5 group EBITDA</td><td class="num">${m(G["Our view"].ebitda[st.year])}</td><td class="num">${m(G["Tahakom's numbers"].ebitda[st.year])}</td></tr>
+  <tr><td>Financed revenue for your choice</td><td class="num">${m(o.R[i])}</td><td class="num">${m(t.R[i])}</td></tr>
+  <tr><td><strong>Break-even ask for your choice</strong></td><td class="num"><strong>${pct(breakEven(st.case,"Our view",st.cap,st.year))}</strong></td><td class="num"><strong>${pct(breakEven(st.case,"Tahakom's numbers",st.cap,st.year))}</strong></td></tr></tbody>`;
+}
+["case","view","year"].forEach(k=>$(k).addEventListener("change",e=>{st[k]=k==="year"?+e.target.value:e.target.value;render()}));
+$("cap").addEventListener("change",e=>{st.cap=+e.target.value;render()});
+$("ask").addEventListener("change",e=>{st.ask=+e.target.value;render()});
+$("matrix").addEventListener("click",e=>{const b=e.target.closest(".cell");if(!b)return;st.cap=+b.dataset.c;st.ask=+b.dataset.a;render()});
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change",render);
+new MutationObserver(render).observe(document.documentElement,{attributes:true,attributeFilter:["data-theme"]});
+render();
+</script>
+
+</body>
+</html>
